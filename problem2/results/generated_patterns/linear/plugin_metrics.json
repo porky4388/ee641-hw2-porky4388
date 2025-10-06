@@ -1,0 +1,12 @@
+{
+  "validity_mean": 0.992,
+  "diversity": 0.058945578970015046,
+  "per_style_validity_mean": [
+    1.0,
+    1.0,
+    1.0,
+    0.96,
+    1.0
+  ],
+  "num_samples": 50
+}

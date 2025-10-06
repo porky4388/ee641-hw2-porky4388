@@ -1,0 +1,70 @@
+{
+  "run_tag": "cyclical",
+  "thresholds": {
+    "kick_jaccard": 0.8,
+    "energy_corr": 0.9
+  },
+  "counts": {
+    "total_pairs": 5,
+    "style_success": 0,
+    "rhythm_success": 1,
+    "both_success": 0
+  },
+  "rates": {
+    "style": 0.0,
+    "rhythm": 0.2,
+    "both": 0.0
+  },
+  "details": [
+    {
+      "file": "style_transfer_0_to_1.npy",
+      "pred_style": 0,
+      "target_style": 1,
+      "kick_jaccard": 0.7,
+      "energy_corr": 0.8582592334386602,
+      "ok_style": false,
+      "ok_rhythm": false,
+      "ok_both": false
+    },
+    {
+      "file": "style_transfer_0_to_2.npy",
+      "pred_style": 0,
+      "target_style": 2,
+      "kick_jaccard": 0.7,
+      "energy_corr": 0.8582592334386602,
+      "ok_style": false,
+      "ok_rhythm": false,
+      "ok_both": false
+    },
+    {
+      "file": "style_transfer_0_to_3.npy",
+      "pred_style": 0,
+      "target_style": 3,
+      "kick_jaccard": 0.7,
+      "energy_corr": 0.8582592334386602,
+      "ok_style": false,
+      "ok_rhythm": false,
+      "ok_both": false
+    },
+    {
+      "file": "style_transfer_0_to_4.npy",
+      "pred_style": 0,
+      "target_style": 4,
+      "kick_jaccard": 0.7,
+      "energy_corr": 0.8582592334386602,
+      "ok_style": false,
+      "ok_rhythm": false,
+      "ok_both": false
+    },
+    {
+      "file": "style_transfer_1_to_0.npy",
+      "pred_style": 1,
+      "target_style": 0,
+      "kick_jaccard": 1.0,
+      "energy_corr": 0.950120222927086,
+      "ok_style": false,
+      "ok_rhythm": true,
+      "ok_both": false
+    }
+  ]
+}
