@@ -7,7 +7,6 @@ Outputs (saved under results/):
 - disentangle_metrics.json (uses silhouette from sklearn)
 - interpolate_*  .npy/.png and controllable generation helpers (unchanged)
 
-Note: Requires scikit-learn.
 """
 
 from __future__ import annotations

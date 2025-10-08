@@ -40,12 +40,12 @@ class FontDataset(Dataset):
     ):
         """
         Args:
-            data_dir: 根目錄（指到包含 fonts/ 的資料夾，例如 hw2-starter/data）
-            split: 'train' or 'val'
-            normalize:
-                - 'zero_one'   -> 輸出值域 [0,1]（符合老師檔頭註解）
-                - 'neg_one_one'-> 輸出值域 [-1,1]（GAN 常用，tanh 友善）
-            enforce_size: 影像長寬目標（預設 28）
+        data_dir: Root directory (points to the folder containing fonts/, e.g., hw2-starter/data)
+        split: 'train' or 'val'
+        normalize:
+        - 'zero_one' -> output range [0, 1]
+        - 'neg_one_one' -> output range [-1, 1] (common for GANs; tanh-friendly)
+        enforce_size: Target image height/width (default 28)
         """
         self.data_dir = Path(data_dir)
         self.split = split
@@ -55,7 +55,7 @@ class FontDataset(Dataset):
         assert self.split in ("train", "val"), f"split must be 'train' or 'val', got {self.split}"
         assert self.data_dir.exists(), f"data_dir not found: {self.data_dir}"
 
-        # 嘗試載入兩種 metadata 之一定義
+
         meta_teacher = self.data_dir / "fonts_metadata.json"
         meta_generated = self.data_dir / "metadata.json"
 
@@ -68,34 +68,28 @@ class FontDataset(Dataset):
                 f"Cannot find metadata. Tried:\n  - {meta_teacher}\n  - {meta_generated}"
             )
 
-        # 字母映射 A..Z -> 0..25
+
         self.letter_to_id = {chr(65 + i): i for i in range(26)}
 
-        # 基本檢查
+
         assert len(self.samples) > 0, f"No samples for split={self.split}"
-        # 檢查第一張存在
+
         first_path = self._resolve_path(self.samples[0])
         assert first_path.exists(), f"Sample file not found: {first_path}"
 
     # -------- metadata loaders --------
     def _load_teacher_metadata(self, meta_path: Path) -> None:
-        """
-        老師版本 fonts_metadata.json
-        期望每筆有 {"path": "...", "letter": "A", "font": int}
-        """
+
         with open(meta_path, "r", encoding="utf-8") as f:
             metadata = json.load(f)
 
         if self.split not in metadata:
             raise KeyError(f"Key '{self.split}' missing in {meta_path}")
         self.samples = metadata[self.split]
-        self.format = "teacher"  # 標記目前使用的格式
+        self.format = "teacher"
 
     def _load_generated_metadata(self, meta_path: Path) -> None:
-        """
-        你提供的 setup_data.py 產生之 fonts/metadata.json
-        使用 train_samples / val_samples 與 filename 欄位
-        """
+
         with open(meta_path, "r", encoding="utf-8") as f:
             metadata = json.load(f)
 
@@ -103,18 +97,16 @@ class FontDataset(Dataset):
         if key not in metadata:
             raise KeyError(f"Key '{key}' missing in {meta_path}")
         self.samples = metadata[key]
-        self.format = "generated"  # 標記目前使用的格式
+        self.format = "generated"
 
     # -------- path resolver --------
     def _resolve_path(self, sample: dict) -> Path:
-        """
-        依照不同 metadata 版型，解析影像相對路徑。
-        """
+
         if self.format == "teacher":
-            # 老師的 path 通常已含 'fonts/train/xxx.png' 或 'fonts/val/xxx.png'
+
             return self.data_dir / sample["path"]
         else:
-            # 你的版本只有 filename，需要自己組路徑
+
             return self.data_dir / self.split / sample["filename"]
 
     # -------- dataset API --------
@@ -125,16 +117,16 @@ class FontDataset(Dataset):
         sample = self.samples[idx]
         img_path = self._resolve_path(sample)
 
-        # 讀圖：強制灰階
+
         with Image.open(img_path) as im:
             im = im.convert("L")
-            # 保證 28×28（或 enforce_size）
+            # enforce_size
             if im.size != (self.enforce_size, self.enforce_size):
                 im = im.resize((self.enforce_size, self.enforce_size), Image.LANCZOS)
 
             img = np.asarray(im, dtype=np.float32)  # 0..255
 
-        # 正規化
+
         if self.normalize == "zero_one":
             img = img / 255.0  # [0,1]
         elif self.normalize == "neg_one_one":
@@ -142,14 +134,14 @@ class FontDataset(Dataset):
         else:
             raise ValueError(f"Unknown normalize mode: {self.normalize}")
 
-        # 轉 tensor，補上 channel 維度 -> (1,H,W)
+
         img_t = torch.from_numpy(img).unsqueeze(0)
 
-        # 取得 letter id
+
         if self.format == "teacher":
             letter = sample["letter"]
         else:
-            # generated 版本已保證有 letter 欄位
+
             letter = sample["letter"]
         letter_id = self.letter_to_id[letter]
 

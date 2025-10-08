@@ -8,7 +8,7 @@ import torch
 import string
 
 def plot_training_history(history: dict, save_path: str | Path, suptitle: str | None = None):
-    """2x2 面板：moving-avg D/G loss、coverage、loss ratio、raw losses；可加抬頭。"""
+
     def _moving_avg(x, k=21):
         if len(x) == 0:
             return x
@@ -54,9 +54,9 @@ def plot_training_history(history: dict, save_path: str | Path, suptitle: str | 
         ax.set_title("Raw losses"); ax.set_xlabel("epoch"); ax.legend(); ax.grid(alpha=0.3)
     else: ax.set_visible(False)
 
-    # 先排版一次
+
     fig.tight_layout()
-    # 可選抬頭
+
     if suptitle:
         fig.suptitle(suptitle, fontsize=12)
         fig.tight_layout(rect=[0, 0, 1, 0.95])

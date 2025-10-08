@@ -74,11 +74,11 @@ def train_gan_with_fix(
     z_dim: int | None = None,
     # --- optimization ---
     lr_g: float = 2e-4,
-    lr_d: float = 1e-4,                    # D 稍低，抑制震盪
+    lr_d: float = 1e-4,
     betas: Tuple[float, float] = (0.5, 0.999),
     # --- FM control ---
     fix_type: str = "feature_matching",
-    fm_weight: float = 15.0,               # 10~20 常見；預設稍強化
+    fm_weight: float = 15.0,
     # --- analysis / outputs ---
     analysis_every: int = 10,
     data_root: str | Path | None = None,

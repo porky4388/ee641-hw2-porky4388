@@ -1,4 +1,4 @@
-# train.py  — EE641 HW2 Problem 2 (run-tag aware outputs)
+# train.py
 from __future__ import annotations
 import os, json, shutil, argparse, wave
 from pathlib import Path
@@ -18,7 +18,7 @@ from training_utils import (
     train_hierarchical_vae,
     sample_diverse_patterns,
 )
-# analyze_latent.py is t-SNE only (as requested)
+# analyze_latent.py
 from analyze_latent import (
     visualize_latent_hierarchy,
     measure_disentanglement,
@@ -49,7 +49,7 @@ def default_config():
 
 def apply_run_paths(cfg, tag: str):
     ROOT = Path(__file__).parent / "results"
-    cfg["results_root"] = str(ROOT)              # fixed: problem2/results
+    cfg["results_root"] = str(ROOT)
     tag = tag or "default"
     cfg["run_tag"] = tag
 
@@ -285,7 +285,7 @@ def evaluate_elbo(model: HierarchicalDrumVAE, loader: DataLoader, device: str) -
 def _encode_z_high(model, x, device):
     with torch.no_grad():
         z_l, mu_l, lv_l, z_h, mu_h, lv_h = model.encode_hierarchy(x.to(device))
-    return mu_h  # [B, z_high_dim]
+    return mu_h
 
 def _kick_jaccard(a, b):
     ka = a[:, 0] > 0.5; kb = b[:, 0] > 0.5
@@ -301,10 +301,10 @@ def _step_energy_corr(a, b):
 def step_style_eval(cfg, device, model, val_labeled_loader,
                     kick_thr=0.80, energy_thr=0.90):
     """
-    讀取 generated_patterns/<tag>/style_transfer_*.npy，
-    以 val-set 的 z_high 建 1-NN gallery 檢查 style 是否到位，
-    並以 Kick Jaccard + step-energy correlation 檢查節奏是否保留。
-    輸出到 generated_patterns/<tag>/style_transfer_eval.json
+    Read generated_patterns/<tag>/style_transfer_*.npy.
+    Build a 1-NN gallery from the validation set’s z_high to check whether the target style is achieved.
+    Verify rhythm preservation using Kick Jaccard and step-energy correlation.
+    Output results to generated_patterns/<tag>/style_transfer_eval.json.
     """
     # 1) z_high gallery
     zs, ys = [], []
@@ -314,7 +314,7 @@ def step_style_eval(cfg, device, model, val_labeled_loader,
     Z = torch.cat(zs, dim=0); Y = torch.cat(ys, dim=0)          # [N,D], [N]
     Zn = F.normalize(Z, p=2, dim=1)
 
-    # 2) 掃檔
+    # 2) sort
     gen_dir = cfg["gen_dir"]
     files = sorted(glob(os.path.join(gen_dir, "style_transfer_*_to_*.npy")))
     if not files:
@@ -498,7 +498,7 @@ def step_style_transfer(cfg, device, model, val_labeled_ds, max_pairs=5):
     print("[Transfer] examples saved.")
 
 def step_latent(cfg, device, model, val_labeled_loader):
-    # 1) Generate t-SNE (analyze_latent saves to results root → we will move)
+    # 1) Generate t-SNE (analyze_latent saves to results root)
     visualize_latent_hierarchy(model, val_labeled_loader, device=device)
     # 2) Move to run-specific latent_dir
     for name in ("tsne_high.png", "tsne_low.png"):

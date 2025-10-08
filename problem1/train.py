@@ -16,14 +16,14 @@ from models import Generator, Discriminator
 from training_dynamics import train_gan
 from fixes import train_gan_with_fix
 
-# plotting & interpolation from evaluate.py (已支援 suptitle 參數)
+# plotting & interpolation from evaluate.py
 from evaluate import (
     plot_training_history,
     save_ratio_hist_from_counts,
     interpolation_experiment,
 )
 
-# ---------- helpers (numeric coverage only; no plotting) ----------
+# ---------- helpers ----------
 def _ensure_dirs(p: Path):
     p.mkdir(parents=True, exist_ok=True)
 
@@ -141,7 +141,6 @@ def _rename_overwrite(src: Path, dst: Path):
     if dst.exists(): dst.unlink()
     src.replace(dst)
 
-# ===== 註解版比較圖 =====
 def _save_compare_grid(
     G_top, G_bottom, out_path: Path,
     n: int = 64, ncol: int = 8, seed: int = 641,
@@ -181,12 +180,12 @@ def _save_compare_grid(
     plt.close(fig)
     print(f"[compare] saved -> {out_path}")
 
-# ------------------------------------ TEMPLATE ------------------------------------
+
 def main():
     """
     Main training entry point for GAN experiments.
     """
-    # Configuration (professor template style)
+
     base = {
         'device': torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
         'batch_size': 64,
@@ -234,7 +233,7 @@ def main():
         sample_epochs=(10, 30, 50, 100),
     )
 
-    # —— 清理訓練器可能自行輸出的預設 collapse 圖 ——  (vanilla)
+
     for stray in [
         Path(base['results_dir']) / "mode_collapse_analysis.png",
         viz_dir / "mode_collapse_analysis.png",
@@ -252,7 +251,7 @@ def main():
         if src.exists():
             _rename_overwrite(src, viz_dir / f"vanilla_grid_ep{ep}.png")
 
-    # delete unwanted 0/1 histogram from temp
+
     for old in ["mode_coverage_hist.png", "vanilla_mode_coverage_hist.png"]:
         p = tmp_viz / old
         if p.exists(): p.unlink()
@@ -307,7 +306,7 @@ def main():
         sample_epochs=(10, 30, 50, 100),
     )
 
-    # —— 清理訓練器可能自行輸出的預設 collapse 圖 ——  (fixed)
+
     for stray in [
         Path(base['results_dir']) / "mode_collapse_analysis.png",
         viz_dir / "mode_collapse_analysis.png",
@@ -317,7 +316,7 @@ def main():
         except Exception:
             pass
 
-    # Save results (professor template)
+    # Save results
     with open(f"{base['results_dir']}/training_log.json", 'w') as f:
         json.dump(hist_f, f, indent=2)
     torch.save({
@@ -334,7 +333,7 @@ def main():
         if p.exists():
             _rename_overwrite(p, viz_dir / f"fixed_grid_ep{ep}.png")
 
-    # delete unwanted 0/1 histogram if produced
+
     for old in ["mode_coverage_hist.png", "fixed_mode_coverage_hist.png"]:
         p = viz_dir / old
         if p.exists(): p.unlink()
@@ -384,7 +383,7 @@ def main():
         top_cov=top_cov, bottom_cov=bottom_cov
     )
 
-    # —— 最後再保險清一次多餘 collapse 圖 ——
+
     for stray in [
         Path(base['results_dir']) / "mode_collapse_analysis.png",
         viz_dir / "mode_collapse_analysis.png",
